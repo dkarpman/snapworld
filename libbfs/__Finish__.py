@@ -4,8 +4,6 @@ import sys
 
 import swlib
 
-#workdir = "/home/rok"
-
 workdir = os.environ["SNAPWOUTPUT"]
 
 def Finish(sw):

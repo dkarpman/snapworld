@@ -44,6 +44,7 @@ if __name__ == '__main__':
 
     sw.SetLog(flog)
     sw.GetConfig()
+    sw.GetVar("cinputs")
 
     Worker(sw)
 

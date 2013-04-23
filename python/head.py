@@ -39,16 +39,9 @@ class Server(BaseHTTPServer.BaseHTTPRequestHandler):
             message_parts.append('%s=%s' % (name, value.rstrip()))
         message_parts.append('')
         message = '\r\n'.join(message_parts)
-        #print "message", message
-
         subpath = self.path.split("/")
-        #print "subpath", subpath
-
         command = parsed_path.path
-        #print "command", command
-
         dargs = dict(urlparse.parse_qsl(parsed_path.query))
-        #print "dargs", dargs
 
         if self.path == "/start":
             print "starting host servers "
@@ -92,6 +85,10 @@ class Server(BaseHTTPServer.BaseHTTPRequestHandler):
             self.end_headers()
             self.wfile.write(body)
             return
+
+	elif command == "/varupdate" : 
+	    varname = dargs.get("n")
+	    varcommand = dargs.get("c") # Either + or -
 
         elif command == "/exec":
             pname = dargs.get("p")
@@ -265,13 +262,13 @@ class Server(BaseHTTPServer.BaseHTTPRequestHandler):
         print "starting host server on host %s, port %s" % (
                     remote["host"], remote["port"])
 
-        #cmd = "ssh %s python git/rok/snapworld/host.py -i %s -p %s -m %s:%s" % (
-        #cmd = "ssh %s python git/rok/snapworld/host.py -d -i %s -p %s -m %s:%s" % (
-        #cmd = "ssh %s python2.6 /lfs/1/tmp/rok/snapworld/host.py -d -i %s -p %s -m %s:%s" % (
-        cmd = "ssh %s snapworld.sh %s %s %s %s" % (
-                    remote["host"], remote["id"], remote["port"],
-                    master["host"], master["port"])
-        print cmd
+	if remote["host"] != "localhost":
+	    cmd = "ssh %s snapworld.sh %s %s %s %s" % (remote["host"], remote["id"], remote["port"], 
+						       master["host"], master["port"])
+        else:
+	    cmd = "sh ${HOME}/Research/git/snapworld/config/snapworld.sh %s %s %s %s" % (remote["id"], remote["port"], 
+	                                                                               master["host"], master["port"])
+	print cmd
         os.system(cmd)
 
     def GetStartInfo(self, config):
@@ -345,10 +342,6 @@ if __name__ == '__main__':
     handler.config = dconf
 
     dconf["tasks"] = config.assign(dconf)
-    #s = simplejson.dumps(dconf)
-    #f = open("snapw-dump.config","w")
-    #f.write(s)
-    #f.close()
 
     print 'Starting head server on port %d, use <Ctrl-C> to stop' % (port)
     server.execute()

@@ -115,7 +115,6 @@ class Server(BaseHTTPServer.BaseHTTPRequestHandler):
             return
 
         elif self.path == "/step":
-    
             line = "execute next step\n"
             self.flog.write(line)
             self.flog.flush()
@@ -128,7 +127,17 @@ class Server(BaseHTTPServer.BaseHTTPRequestHandler):
             #   skip execution if there are no tasks to execute,
             #   qact does not exist
 
+	    # initially just get the whole config all over again -- Extremely inefficient
+            sconf = client.config(master)
+            dconf = simplejson.loads(sconf)
+            handler.config = dconf
+            flog.write("Got configuration size %d\n" % (len(sconf)))
+            flog.write(str(dconf))
+            flog.write("\n")
+            flog.flush()
+
             # get the tasks to execute
+
             qactname = "snapw.%d/qact" % (self.pid)
             active = []
             if os.path.exists(qactname):

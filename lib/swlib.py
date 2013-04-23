@@ -60,6 +60,7 @@ class SnapWorld:
         self.name = self.taskname.split("-",1)[0]
 
         self.var = None
+	self.coordination = None
         self.route = None
         self.hosts = None
         self.tasks = None
@@ -97,6 +98,7 @@ class SnapWorld:
         self.config = simplejson.loads(sconf)
 
         self.var = self.config.get("var")
+	self.coordination = self.config.get("coordination")
         self.route = self.config.get("route")
         self.tasks = self.config.get("tasks")
 
@@ -162,6 +164,9 @@ class SnapWorld:
         # get the variable requested
         result = self.var.get(name)
         return result
+
+    def GetCoordination(self, name):
+        return self.coordination.get(name)
 
     def GetStateName(self):
         fname = "swstate-%s.txt" % (self.taskname)

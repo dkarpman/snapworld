@@ -1,8 +1,8 @@
 #!/bin/bash
 
-export SNAPWBIN=${HOME}/git/snapworld/work
-export SNAPWEXEC=${HOME}/snapwexec
-export SNAPWOUTPUT=${HOME}/snapwexec
+export SNAPWBIN=${HOME}/Research/work
+export SNAPWEXEC=${HOME}/Research/snapwexec
+export SNAPWOUTPUT=${HOME}/Research/snapwexec
 export PYTHON=python
 
 SNAPWID=$1
