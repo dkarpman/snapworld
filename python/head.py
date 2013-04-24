@@ -41,13 +41,12 @@ class Server(BaseHTTPServer.BaseHTTPRequestHandler):
         message = '\r\n'.join(message_parts)
         subpath = self.path.split("/")
         command = parsed_path.path
-        dargs = dict(urlparse.parse_qsl(parsed_path.query))
+        dargs   = dict(urlparse.parse_qsl(parsed_path.query))
 
         if self.path == "/start":
             print "starting host servers "
-
             master = self.config["master"]
-            hosts = self.config["hosts"]
+            hosts  = self.config["hosts"]
             for h in hosts:
                 self.StartHostServer(h, master)
 
@@ -55,7 +54,7 @@ class Server(BaseHTTPServer.BaseHTTPRequestHandler):
             print "terminating host servers"
 
             master = self.config["master"]
-            hosts = self.config["hosts"]
+            hosts  = self.config["hosts"]
             for h in hosts:
                 self.QuitHostServer(h)
 
@@ -70,7 +69,6 @@ class Server(BaseHTTPServer.BaseHTTPRequestHandler):
 
         elif self.path == "/dummy":
             print "dummy request"
-
             self.send_response(200)
             self.send_header('Content-Length', 0)
             self.end_headers()
@@ -78,7 +76,6 @@ class Server(BaseHTTPServer.BaseHTTPRequestHandler):
 
         elif self.path == "/config":
             print "get configuration"
-
             body = simplejson.dumps(self.config)
             self.send_response(200)
             self.send_header('Content-Length', len(body))
@@ -87,8 +84,9 @@ class Server(BaseHTTPServer.BaseHTTPRequestHandler):
             return
 
 	elif command == "/varupdate" : 
-	    varname = dargs.get("n")
-	    varcommand = dargs.get("c") # Either + or -
+	    varname    = dargs.get("n")
+	    varcommand = dargs.get("c") # Either + or - for now
+	    config.addVarModifier(dconf, varname, varcommand)
 
         elif command == "/exec":
             pname = dargs.get("p")
@@ -145,6 +143,7 @@ class Server(BaseHTTPServer.BaseHTTPRequestHandler):
                     #       clear the continue indicator
                     self.server.ready = set()
                     self.server.iterate = False
+		    config.modifyVars(dconf)
 
                     # send a start message at the beginning
                     if not self.server.start:
@@ -316,11 +315,10 @@ if __name__ == '__main__':
     print dconf
 
     master = dconf["master"]
-
-    host = master["host"]
-    port = int(master["port"])
-
+    host   = master["host"]
+    port   = int(master["port"])
     server = ThreadedHTTPServer((host, port), Server)
+
     # head service host name
     server.host = host
     # head service port

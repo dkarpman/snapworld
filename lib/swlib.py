@@ -20,11 +20,11 @@ class SnapWorld:
             print "Usage: " + argv[0] + " -t <id> -h <host>:<port> -q <queue_dir> -c <config_file> -l"
             sys.exit(1)
 
-        self.taskname = None
-        self.host = None
-        self.qin = None
+        self.taskname   = None
+        self.host       = None
+        self.qin        = None
         self.configfile = None
-        self.local = False
+        self.local      = False
 
         index = 1
         while index < len(argv):
@@ -57,17 +57,14 @@ class SnapWorld:
             sys.exit(1)
 
         self.config = None
-        self.name = self.taskname.split("-",1)[0]
-
-        self.var = None
-	self.coordination = None
-        self.route = None
-        self.hosts = None
-        self.tasks = None
-        self.range = None
-
+        self.name   = self.taskname.split("-",1)[0]
+        self.var    = None
+        self.route  = None
+        self.hosts  = None
+        self.tasks  = None
+        self.range  = None
         self.target = None
-        self.flog = None
+        self.flog   = None
 
     def SetLog(self, flog):
         self.flog = flog
@@ -96,14 +93,11 @@ class SnapWorld:
             return None
 
         self.config = simplejson.loads(sconf)
-
-        self.var = self.config.get("var")
-	self.coordination = self.config.get("coordination")
-        self.route = self.config.get("route")
-        self.tasks = self.config.get("tasks")
-
-        dbunch = self.config.get("bunch")
-        hostlist = self.config.get("hosts")
+        self.var    = self.config.get("var")
+        self.route  = self.config.get("route")
+        self.tasks  = self.config.get("tasks")
+        dbunch      = self.config.get("bunch")
+        hostlist    = self.config.get("hosts")
 
         if dbunch:
             dinfo = dbunch.get(self.name)
@@ -165,9 +159,6 @@ class SnapWorld:
         result = self.var.get(name)
         return result
 
-    def GetCoordination(self, name):
-        return self.coordination.get(name)
-
     def GetStateName(self):
         fname = "swstate-%s.txt" % (self.taskname)
         return fname
@@ -203,9 +194,9 @@ class SnapWorld:
 
         #dstnum = dstid / self.range
         #dstname = self.target + "-" + str(dstnum)
-        dstname = self.target[channel] + "-" + str(dstid)
+        dstname   = self.target[channel] + "-" + str(dstid)
         dsthostid = self.tasks.get(dstname)
-        dshost = self.hosts.get(dsthostid)
+        dshost    = self.hosts.get(dsthostid)
 
         if self.local:
             fname = self.GetOutName(dstname)

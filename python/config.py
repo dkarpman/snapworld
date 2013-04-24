@@ -9,16 +9,10 @@ def readconfig(fname):
     f = open(fname)
     for line in f:
         cline = line.split("\n")[0]
-        #print cline
-
         words = cline.split()
-
         # skip empty lines and comments
         if len(words) == 0  or  words[0] == "#":
             continue
-
-        #print words
-
         key = words[0]
 
         if key == "master":
@@ -33,10 +27,9 @@ def readconfig(fname):
             p = "8080"
             if len(w) > 1:
                 p = w[1]
-            d = {}
-            d["host"] = h
-            d["port"] = p
-
+            d               = {}
+            d["host"]       = h
+            d["port"]       = p
             dconf["master"] = d
 
         elif key == "hosts":
@@ -58,10 +51,10 @@ def readconfig(fname):
                 p = "8100"
                 if len(w) > 1:
                     p = w[1]
-                d = {}
+                d         = {}
                 d["host"] = h
                 d["port"] = p
-                d["id"] = str(hcount)
+                d["id"]   = str(hcount)
                 l.append(d)
                 hcount += 1
     
@@ -84,8 +77,8 @@ def readconfig(fname):
         elif key == "bunch":
             if len(words) < 6  or  words[2] != "size"  or  words[4] != "range":
                 continue
-            name = words[1]
-            size = words[3]
+            name  = words[1]
+            size  = words[3]
             range = words[5]
 
             execprog = None
@@ -104,8 +97,8 @@ def readconfig(fname):
             if not dconf.has_key("bunch"):
                 dconf["bunch"] = {}
 
-            dconf["bunch"][name] = {}
-            dconf["bunch"][name]["size"] = size
+            dconf["bunch"][name]          = {}
+            dconf["bunch"][name]["size"]  = size
             dconf["bunch"][name]["range"] = range
             if execprog:
                 dconf["bunch"][name]["exec"] = execprog
@@ -113,11 +106,10 @@ def readconfig(fname):
         elif key == "route":
             if len(words) < 3:
                 continue
-            src = words[1]
-            dest = words[2]
-
-            srcname = src
-            srcport = "1"
+            src      = words[1]
+            dest     = words[2]
+            srcname  = src
+            srcport  = "1"
             srcwords = src.split(":")
             if len(srcwords) >= 2:
                 srcname = srcwords[0]
@@ -135,21 +127,36 @@ def readconfig(fname):
 
     return dconf
 
-def assign(dconf):
-    hosts = dconf["hosts"]
+def addVarModifier(dconf, varname, vartask):
+    if not dconf.has_key("varmod"):
+        dconf["varmod"] = {}
+    if not dconf["varmod"].has_key(varname):
+        dconf["varmod"][varname] = []
+    dconf["varmod"][varname].insert(-1, vartask)
 
+def modifyVars(dconf):
+    if dconf.has_key("varmod"):
+        for varname, vartasks in dconf["varmod"].iteritems():
+            for vartask in vartasks:
+	        if   vartask[0] == "+":
+                    dconf["vars"][varname] += int(vartask[1:])
+	        elif vartask[0] == "-":
+	            dconf["vars"][varname] -= int(vartask[1:])
+        dconf["varmod"] = {}
+
+def assign(dconf):
+    hosts     = dconf["hosts"]
     hostindex = 0
-    dtasks = {}
+    dtasks    = {}
 
     # add the initial task
     #hostindex = addtask(dtasks,hosts,"__Start__",hostindex)
 
     # assign all the task in round-robin fashion
-    for bunch,bdata in dconf["bunch"].iteritems():
+    for bunch, bdata in dconf["bunch"].iteritems():
         #print bunch,bdata
         size = bdata["size"]
         #print bunch,size
-
         for i in xrange(0,int(size)):
             taskname = bunch + "-" + str(i)
             if bunch == "__Finish__":
@@ -166,16 +173,12 @@ def addtask(dtasks,hosts,taskname,hostindex):
     hostindex += 1
     if hostindex >= len(hosts):
         hostindex = 0
-
     return hostindex
 
 def uniquefile(fpath):
-
     # find path, suffix ('/path/file', '.ext')
-    fparts = os.path.splitext(fpath)
-
-    fname = fpath
-    
+    fparts  = os.path.splitext(fpath)
+    fname   = fpath
     counter = 1
     while 1:
         try:
@@ -195,11 +198,9 @@ def mkdir_p(path):
         else: raise
 
 if __name__ == '__main__':
-
     if len(sys.argv) < 2:
         print "Usage: %s <file>" % (sys.argv[0])
         sys.exit(1)
-
     fname = sys.argv[1]
 
     # read the configuration file
@@ -207,10 +208,6 @@ if __name__ == '__main__':
 
     for key,value in dconf.iteritems():
         print "%s: %s" % (key, str(value))
-
-    #print
-    #json = simplejson.dumps(dconf)
-    #print json
     
     # assign tasks to hosts
     dtasks = assign(dconf)

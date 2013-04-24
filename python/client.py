@@ -77,24 +77,21 @@ def dummy(server):
 def prepare(server):
     # send step prepare
     url = "http://%s/prepare" % (server)
-
-    #print "step", server
-
-    f = urllib2.urlopen(url)
+    f    = urllib2.urlopen(url)
     body = f.read()
     f.close()
 
 def done(server, id):
     # send done
-    url = "http://%s/done/%s" % (server,id)
-    f = urllib2.urlopen(url)
+    url  = "http://%s/done/%s" % (server,id)
+    f    = urllib2.urlopen(url)
     body = f.read()
     f.close()
 
 def ready(server, id, numtasks=0):
     # send ready
     url = "http://%s/ready/%s/%s" % (server,id,str(numtasks))
-    f = urllib2.urlopen(url)
+    f    = urllib2.urlopen(url)
     body = f.read()
     f.close()
 
@@ -107,7 +104,7 @@ def message(server, src, dst, body):
 
     request = urllib2.Request(url, data=body)
     request.add_header('Content-Length', '%d' % length)
-    f = urllib2.urlopen(request)
+    f    = urllib2.urlopen(request)
     body = f.read()
     f.close()
 
@@ -120,16 +117,8 @@ def messagevec(server, src, dst, Vec):
     h.endheaders()
 
     fileno = h.sock.fileno()
-    #print "fileno", fileno
-
-    n = Vec.Send(fileno)
-    #print n
-
-    res = h.getresponse()
-    #print res.status, res.reason
-    data = res.read()
-    #print len(data)
-    #print data
-
+    n      = Vec.Send(fileno)
+    res    = h.getresponse()
+    data   = res.read()
     h.close()
 

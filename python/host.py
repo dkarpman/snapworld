@@ -11,9 +11,9 @@ import urllib2
 import BaseHTTPServer
 import SocketServer
 
-bindir = os.environ["SNAPWBIN"]
+bindir  = os.environ["SNAPWBIN"]
 workdir = os.environ["SNAPWEXEC"]
-python = os.environ["PYTHON"]
+python  = os.environ["PYTHON"]
 
 sys.path.append(bindir)
 
@@ -58,10 +58,8 @@ class Server(BaseHTTPServer.BaseHTTPRequestHandler):
         #print subpath
 
         if self.path == "/prepare":
-
             # move qin to qact
-
-            qinname = "snapw.%d/qin" % (self.pid)
+            qinname  = "snapw.%d/qin" % (self.pid)
             qactname = "snapw.%d/qact" % (self.pid)
 
             # rename an existing qact
@@ -87,6 +85,15 @@ class Server(BaseHTTPServer.BaseHTTPRequestHandler):
                         qinname, qactname, qactnewname)
             self.flog.write(line)
             self.flog.flush()
+
+	    # initially just get the whole config all over again -- Extremely inefficient
+            sconf = client.config(master)
+            dconf = simplejson.loads(sconf)
+            handler.config = dconf
+            flog.write("Got configuration size %d\n" % (len(sconf)))
+            flog.write(str(dconf))
+            flog.write("\n")
+            flog.flush()
 
             # send ready to master
             client.ready(self.master, self.id, numtasks)
@@ -126,15 +133,6 @@ class Server(BaseHTTPServer.BaseHTTPRequestHandler):
             # TODO, implement null action,
             #   skip execution if there are no tasks to execute,
             #   qact does not exist
-
-	    # initially just get the whole config all over again -- Extremely inefficient
-            sconf = client.config(master)
-            dconf = simplejson.loads(sconf)
-            handler.config = dconf
-            flog.write("Got configuration size %d\n" % (len(sconf)))
-            flog.write(str(dconf))
-            flog.write("\n")
-            flog.flush()
 
             # get the tasks to execute
 
