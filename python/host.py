@@ -25,7 +25,6 @@ import pexec
 class Server(BaseHTTPServer.BaseHTTPRequestHandler):
     
     def do_GET(self):
-        #print "GET path", self.path
         parsed_path = urlparse.urlparse(self.path)
         message_parts = [
                 'CLIENT VALUES:',
@@ -49,13 +48,7 @@ class Server(BaseHTTPServer.BaseHTTPRequestHandler):
             message_parts.append('%s=%s' % (name, value.rstrip()))
         message_parts.append('')
         message = '\r\n'.join(message_parts)
-
-        #print message
-        #self.flog.write(message)
-        #self.flog.flush()
-
         subpath = self.path.split("/")
-        #print subpath
 
         if self.path == "/prepare":
             # move qin to qact
@@ -217,18 +210,11 @@ class Server(BaseHTTPServer.BaseHTTPRequestHandler):
         if length  and  length > 0:
             body = self.rfile.read(length)
 
-        #print "length", length
-        #print "body"
-        #print body
-
         subpath = self.path.split("/")
-        #print subpath
         
         if subpath[1] == "msg":
             dst = subpath[2]
             src = subpath[3]
-            #print "msg", dst, src
-            #print "body", body
 
             dirname = "snapw.%d/qin/%s" % (self.pid, dst)
             config.mkdir_p(dirname)
@@ -381,8 +367,7 @@ def Execute(args):
         port = args.server.port
 
         # construct a command line
-        cmd = python + " %s -t %s -h %s:%d -q %s" % (
-                    progpath, task, host, port, qdir)
+        cmd = python + " %s -t %s -h %s:%d -q %s" % (progpath, task, host, port, qdir)
         args.flog.write("starting cmd %s\n" % (cmd))
         args.flog.flush()
 
@@ -413,8 +398,6 @@ if __name__ == '__main__':
 
     print "host.py started"
 
-    #host = "localhost"
-    #host = "bruce.stanford.edu"
     host = "0.0.0.0"
     port = None
     master = None
@@ -445,7 +428,6 @@ if __name__ == '__main__':
     print "workdir", workdir
     sys.stdout.flush()
 
-    #daemon_mode = False
     if daemon_mode:
         print "daemon"
         retCode = daemon.createDaemon()
@@ -453,21 +435,16 @@ if __name__ == '__main__':
     os.chdir(workdir)
 
     pid = os.getpid()
-    #print "pid", pid
 
     fname1 = "log-snapw-host-%d.txt" % (port)
-    fname = "log-swhost-%d.txt" % (pid)
+    fname  = "log-swhost-%d.txt" % (pid)
 
     fd = os.open(fname1, os.O_APPEND | os.O_WRONLY) # standard input (0)
-    #flog = open(fname, "a") # standard input (0)
 
     # Duplicate standard input to standard output and standard error.
     os.dup2(0, 1)           # standard output (1)
     os.dup2(0, 2)           # standard error (2)
 
-    #flog = os.fdopen(fd)
-
-    #flog = sys.stdout
     flog = open(fname,"a")
 
     print "host %s, port %d" % (host, port)

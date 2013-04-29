@@ -31,7 +31,6 @@ def GetResults(msglist):
 def Worker(sw):
     cinputs = sw.GetVar("cinputs")
     sw.flog.write("cinputs = %d\n" %( cinputs))
-#    sw.flog.write("can I write anything")
     sw.flog.flush()
     Finish(sw)
 
@@ -42,7 +41,6 @@ if __name__ == '__main__':
 
     pid      = os.getpid()
     fname    = "log-swfinish-%d.txt" % (pid)
-    #fname = "log-swwork-%s.txt" % (sw.GetName())
     fullname = os.path.join(workdir,fname)
     flog     = open(fullname,"a")
 

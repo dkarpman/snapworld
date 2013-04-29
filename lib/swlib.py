@@ -68,7 +68,6 @@ class SnapWorld:
 
     def SetLog(self, flog):
         self.flog = flog
-
         self.flog.write("Starting task %s with host %s, queue %s\n" % (self.taskname, self.host, self.qin))
         self.flog.flush()
 
@@ -137,6 +136,10 @@ class SnapWorld:
     def GetRange(self):
         return self.range
 
+    #######
+    # Need to have multiple ports
+    # Need to have End of Stream
+    #######
     def GetMsgList(self):
         l = os.listdir(self.qin)
         return l
@@ -152,6 +155,8 @@ class SnapWorld:
         f.close()
         msg = simplejson.loads(s)
         return msg
+    #################################
+    #################################
 
     def GetVar(self, name):
         # get variables from the configuration
@@ -190,10 +195,11 @@ class SnapWorld:
         fname = "swout-%s-%s.txt" % (self.taskname, dstname)
         return fname
 
-    def Send(self, dstid, d, channel = "1", swsnap = False):
-
-        #dstnum = dstid / self.range
-        #dstname = self.target + "-" + str(dstnum)
+    ############################
+    # Need to have ports       
+    # Need to send end of stream
+    ############################
+    def Send(self, dstid, d, channel = "1", port = "1", swsnap = False):
         dstname   = self.target[channel] + "-" + str(dstid)
         dsthostid = self.tasks.get(dstname)
         dshost    = self.hosts.get(dsthostid)
@@ -211,7 +217,6 @@ class SnapWorld:
                 FOut = Snap.TFOut(Snap.TStr(fname))
                 d.Save(FOut)
                 FOut.Flush()
-                #print "send Snap task %s, host %s, *** Error: local 'Send' not yet implemented" % (dstname, dshost)
                 return
 
             client.messagevec(dshost,self.taskname,dstname,d)

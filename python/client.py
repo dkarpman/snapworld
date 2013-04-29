@@ -13,9 +13,6 @@ def config(server):
 def step(server):
     # send step start
     url = "http://%s/step" % (server)
-
-    #print "step", server
-
     f = urllib2.urlopen(url)
     body = f.read()
     f.close()
@@ -34,8 +31,6 @@ def getexec(server,prog,timestamp):
         url = "http://%s/exec?p=%s" % (server, prog)
     else:
         url = "http://%s/exec?p=%s&t=%s" % (server, prog, str(timestamp))
-
-    print "exec", server, prog, timestamp
 
     httpcode = 200
     try:
@@ -56,27 +51,21 @@ def getexec(server,prog,timestamp):
 
 def quit(server):
     # send termination quit
-    url = "http://%s/quit" % (server)
-
-    #print "step", server
-
-    f = urllib2.urlopen(url)
+    url  = "http://%s/quit" % (server)
+    f    = urllib2.urlopen(url)
     body = f.read()
     f.close()
 
 def dummy(server):
     # send a dummy request
-    url = "http://%s/dummy" % (server)
-
-    #print "step", server
-
-    f = urllib2.urlopen(url)
+    url  = "http://%s/dummy" % (server)
+    f    = urllib2.urlopen(url)
     body = f.read()
     f.close()
 
 def prepare(server):
     # send step prepare
-    url = "http://%s/prepare" % (server)
+    url  = "http://%s/prepare" % (server)
     f    = urllib2.urlopen(url)
     body = f.read()
     f.close()
@@ -90,22 +79,19 @@ def done(server, id):
 
 def ready(server, id, numtasks=0):
     # send ready
-    url = "http://%s/ready/%s/%s" % (server,id,str(numtasks))
+    url  = "http://%s/ready/%s/%s" % (server,id,str(numtasks))
     f    = urllib2.urlopen(url)
     body = f.read()
     f.close()
 
 def message(server, src, dst, body):
     # send a task message from src to dst
-    url = "http://%s/msg/%s/%s" % (server,dst,src)
-    length = len(body)
-
-    print "message url", url
-
+    url     = "http://%s/msg/%s/%s" % (server,dst,src)
+    length  = len(body)
     request = urllib2.Request(url, data=body)
     request.add_header('Content-Length', '%d' % length)
-    f    = urllib2.urlopen(request)
-    body = f.read()
+    f       = urllib2.urlopen(request)
+    body    = f.read()
     f.close()
 
 def messagevec(server, src, dst, Vec):
