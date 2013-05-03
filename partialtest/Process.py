@@ -18,15 +18,21 @@ def GenerateList(sw):
         ne = dmsg["body"]["r"] + ns
 
         i = ns
-        randlist = {}
-        while i <= ne:
-            randlist[i] = random.randint(1, 1000)
+        randlist = []
+        while i < ne:
+            randlist.append(random.randint(1, 1000))
             i = i + 1
 
-    dmsgout = {}
-    dmsgout["src"] = taskname
-    dmsgout["cmd"] = ""
-	
+    dmsgout                      = {}
+    dmsgout["src"]               = taskname
+    dmsgout["cmd"]               = "join"
+    dmsgout["body"]              = {}
+    dmsgout["body"]["values"]    = randlist
+    dmsgout["body"]["starting"]  = 0
+    # Hard-coded funnel
+    dst     = int(int(taskname.split("-", 1)[1]) / 2)
+    port    = int(taskname.split("-", 1)[1]) % 2  
+    sw.Send(dst, dmsgout)
 
 def Worker(sw):
     GenerateList(sw)
