@@ -22,16 +22,18 @@ def GenerateList(sw):
         while i < ne:
             randlist.append(random.randint(1, 1000))
             i = i + 1
-
+        # -1 is what is used for End Of Stream
+        randlist.append(-1) 
     dmsgout                      = {}
     dmsgout["src"]               = taskname
     dmsgout["cmd"]               = "join"
     dmsgout["body"]              = {}
     dmsgout["body"]["values"]    = randlist
-    dmsgout["body"]["starting"]  = 0
+    dmsgout["body"]["ident"]     = int(taskname.split("-", 1)[1]) %2
+#    dmsgout["body"]["starting"]  = 0
     # Hard-coded funnel
     dst     = int(int(taskname.split("-", 1)[1]) / 2)
-    port    = int(taskname.split("-", 1)[1]) % 2  
+#    port    = int(taskname.split("-", 1)[1]) % 2  
     sw.Send(dst, dmsgout)
 
 def Worker(sw):

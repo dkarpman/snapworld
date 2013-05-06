@@ -136,10 +136,10 @@ class SnapWorld:
     def GetRange(self):
         return self.range
 
-    #######
+    #############################
     # Need to have multiple ports
-    # Need to have End of Stream
-    #######
+    # Need to have End of Stream 
+    #############################
     def GetMsgList(self):
         l = os.listdir(self.qin)
         return l
@@ -170,7 +170,6 @@ class SnapWorld:
         
     def LoadState(self):
         fname = "swstate-%s.txt" % (self.taskname)
-
         try:
             f = open(fname,"r")
         except:
@@ -196,7 +195,7 @@ class SnapWorld:
         return fname
 
     ############################
-    # Need to have ports       
+    # Need to have ports        
     # Need to send end of stream
     ############################
     def Send(self, dstid, d, channel = "1", port = "1", swsnap = False):
