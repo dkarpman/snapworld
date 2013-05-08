@@ -30,6 +30,7 @@ def GenerateList(sw):
     dmsgout["body"]              = {}
     dmsgout["body"]["values"]    = randlist
     dmsgout["body"]["ident"]     = int(taskname.split("-", 1)[1]) %2
+    dmsgout["body"]["type"]      = "new"
 #    dmsgout["body"]["starting"]  = 0
     # Hard-coded funnel
     dst     = int(int(taskname.split("-", 1)[1]) / 2)
